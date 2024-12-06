@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
+    <title>Посты Инстарграм</title>
+<style>
+    body { font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            flex-direction: column;}
+
+    .container {  width: 80%;
+            max-width: 600px; }
+
+    .post { background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            padding: 20px; }
+
+    .post img { max-width: 100%;
+            border-radius: 8px; }
+
+    .post h2 { margin: 10px 0;
+            font-size: 24px; }
+
+    .post p { font-size: 16px;
+            color: #333;}
+</style>
+</head>
+<body bgcolor="white">
+{% for instagram in data %}
+
+<div class="container">
+<div class="post">
+    <h1>{{instagram[1]}}</h1>
+    <img id="post_img" src="{{instagram[2]}}">
+    <h3>{{instagram[3]}}</h3>
+</div>
+</div>
+    {% endfor %}
+    </table>
+    <p></p>
+    <a href="http://127.0.0.1:5000/add/">Добавить Новый Пост</a>
+</body>
+</html>
