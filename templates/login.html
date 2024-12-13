@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name = 'vievport' content="widh = device-width, initial-scale = 1.0">
+    <title>Вход</title>
+    <style>
+        .success{color : green}
+        .danger {color : red}
+    </style>
+</head>
+<body>
+{% with messages = get_flashed_messages(with_categories = true) %}
+{% if messages %}
+{% for category, message in messages %}
+<p></p>
+{% endfor %}
+{% endif %}
+{% endwith %}
+<h2>Ну входи, раз захотел</h2>
+<form action="/login/", method = "post">
+    <label for="username">Лагин</label>
+    <input id="username" type="text" name="username">
+    <p></p>
+    <label for="password">Парол</label>
+    <input id="password" type="text" name="password">
+    <p></p>
+    <input type="submit" value="Логин">
+</form>
+</body>
+</html>
