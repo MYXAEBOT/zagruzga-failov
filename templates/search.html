@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
-    <title>Посты Инстарграм</title>
+    <meta name = 'vievport' content="widh = device-width, initial-scale = 1.0">
+    <title>Вход</title>
 <style>
     body { font-family: Arial, sans-serif;
             margin: 0;
@@ -34,26 +34,13 @@
             color: #333;}
 </style>
 </head>
-<body bgcolor="white">
-{% for instagram in data %}
-
-<div class="container">
-<div class="post">
-    <h1>{{instagram[1]}}</h1>
-    <img id="post_img" src="{{instagram[2]}}">
-    <h3>{{instagram[3]}}</h3>
-    <a href="123">открыть пост</a>
+<body>
+<h2>Поиск человека</h2>
 <form action="/", method = "post">
-    <input type="text" name="id_post"  value={{instagram[0]}} style="display:none">
-        <input type="submit" value="Лайк">
-</form>
-</div>
-</div>
-    {% endfor %}
-    </table>
+    <label for="username">Его Никнейм</label>
+    <input id="username" type="text" name="username">
     <p></p>
-    <a href="/add/">Добавить Новый Пост</a>
-<p></p>
-    <a href="/search/">Выполнить поиск человека</a>
+    <input type="submit" value="Поиск">
+</form>
 </body>
 </html>

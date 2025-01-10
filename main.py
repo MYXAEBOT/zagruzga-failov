@@ -3,36 +3,6 @@ from datetime import timedelta
 from flask import Flask, render_template, request, flash, session, redirect, url_for
 from flask_session import Session
 import sqlite3
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 app = Flask(__name__)
 app.secret_key = '12345'
 app.config['SESSION_TYPE'] = 'cachelib'
@@ -40,89 +10,50 @@ app.config['SESSION_CACHELIB'] = FileSystemCache(cache_dir='flask_session', thre
 Session(app)
 import sqlite3
 conn = sqlite3.connect('data.db', check_same_thread=False)
-
 cursor = conn.cursor()
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-@app.route('/')
+@app.route('/', methods=['POST', 'GET'])
 def main_page():
-    cursor.execute('SELECT * FROM instagram')
-    data = cursor.fetchall()
-    return render_template('main.html', data=data)
-
-
-
-
-
-
-
-
-
-
-
+    if request.method == "GET":
+        cursor.execute('SELECT * FROM instagram')
+        data = cursor.fetchall()
+        return render_template('main.html', data=data)
+    elif request.method == "POST":
+        cursor.execute('SELECT * FROM instagram')
+        data = cursor.fetchall()
 
 @app.route('/autorisation/', methods=['GET', 'POST'])
 def autorisation():
     if request.method == 'POST':
-        login = request.form['username']
-        if login == 'login':
+        login = request.form['username']           
+        password = request.form['password']
+        cursor.execute('SELECT * FROM autorisation WHERE username = ? AND password = ?', [login, password])
+        data = cursor.fetchall()
+
+        if len(data) != 0:
             flash('Вход выполнен успешно!', 'success')
-            return render_template('autorisation.html')
+            session['login'] = True
+            session['username'] = login
+            session.permanent = False
+            app.permanent_session_lifetime = timedelta(minutes=1)
+            session.modified = True
+            flash('Вход выполнен успешно!', 'success')
+            return redirect(url_for('main_page'))
         else:
-            flash('неправильный логин или пароль','danger')
-            return render_template('login.html')
+            flash('Неправильное имя пользователя или пароль.', 'danger')
+            return redirect(url_for('page_login'))
     return render_template('autorisation.html')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 @app.route('/add/')
 def add_page():
+    cursor.execute('SELECT * FROM autorisation')
+    data = cursor.fetchall()
     if 'login' not in session:
         flash('Необходимо залогиниться', 'danger')
         return redirect(url_for('page_login'))
     return render_template('add.html')
-
-
-
-
-
-
-
-
-
-
-
 
 
 @app.route('/autorisation/save/', methods=['POST'])
@@ -147,18 +78,6 @@ def save_page():
     return render_template('login.html')
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 @app.route('/upload/', methods=['POST'])
 def save_post():
     image = request.files.get('image')
@@ -173,45 +92,24 @@ def save_post():
     return redirect(url_for('main_page'))
 
 
-
-
-
-
-
-
-
-
-
-
-
 @app.route('/login/', methods=['POST', 'GET'])
 def page_login():
-    if request.method == 'POST':
-        login = request.form['username']
-        password = request.form['password']
-        cursor.execute('SELECT * FROM autorisation WHERE username = ? AND password = ?', [login, password])
-        data = cursor.fetchall()
-        print(data)
-        if data:
-            flash('Вход выполнен успешно!', 'success')
-            session['login'] = True
-            session['username'] = login
-            session.permanent = False
-            app.permanent_session_lifetime = timedelta(minutes=1)
-            session.modified = True
-        else:
-            flash('Неправильное имя пользователя или пароль.', 'danger')
-    return redirect(url_for('main_page'))
+
+    return render_template('login.html')
 
 
+@app.route('/search/', methods=['POST', 'GET'])
+def found_user():
 
+    return render_template('search.html')
 
-
-
-
-
-
-
+@app.route('/search/result/', methods = ['POST,GEYT'])
+def result():
+    login = request.form['username']
+    cursor.execute('SELECT * FROM autorisation WHERE username = ?', [login])
+    data = cursor.fetchall()
+    if data != []:
+        pass
 
 
 
@@ -219,17 +117,7 @@ def page_login():
 def logout():
     session.clear()
     flash('вы вышли из профиля','danger')
-    return redirect(url_for('autorisation'))
-
-
-
-
-
-
-
-
-
-
+    return redirect(url_for('page_login'))
 
 
 if __name__ == '__main__':
